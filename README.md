@@ -105,6 +105,43 @@ The app uses the following permissions:
 
 ---
 
+## **Issues Faced & Solutions**
+
+### **1. Issue: SMS sending failed**
+**Problem:** Initially, the SMS sending feature was not functioning due to a permission issue with sending SMS messages on certain devices.
+
+**Solution:** 
+- Ensured the `SEND_SMS` permission was added to the **AndroidManifest.xml**.
+- Added runtime permission request logic for sending SMS messages.
+
+### **2. Issue: GPS location fetching was unreliable**
+**Problem:** On some devices, fetching the current GPS location failed intermittently, particularly in locations with weak signal or when there was a delay in obtaining location services.
+
+**Solution:** 
+- Implemented a fallback location (a default latitude and longitude) in case the location could not be fetched in a reasonable amount of time. This ensures the user still has a location to be sent in emergencies, even if the device cannot fetch the precise GPS location immediately.
+
+### **3. Issue: Map interaction with ScrollView**
+**Problem:** The map was in a **ScrollView**, which caused conflicts when interacting with the map (such as zooming or dragging the map).
+
+**Solution:**
+- Disabled the **parent ScrollView's** scroll behavior temporarily when the user touches the map to allow smooth interaction. This was done by calling `requestDisallowInterceptTouchEvent(true)` on the parent view during map touch events.
+
+### **4. Issue: Difficult navigation in large UI elements**
+**Problem:** The design was initially cluttered and navigation was tough for elderly users, especially those with motor impairments.
+
+**Solution:** 
+- Simplified the interface to include **larger buttons** for critical apps like camera, flashlight, emergency contacts, and SOS button.
+- The buttons were made more prominent and easy to access by focusing on **key, frequently used apps** and **features**.
+
+### **5. Issue: Managing contacts from the phonebook**
+**Problem:** Reading contacts from the device sometimes returned blank contact lists or crashed on specific Android versions due to the lack of necessary permissions.
+
+**Solution:** 
+- Added handling for **READ_CONTACTS** permission, requesting it at runtime.
+- Used content providers to efficiently access and display contacts while gracefully handling errors where access was denied or contacts were unavailable.
+
+---
+
 ## **Contributing**
 Contributions are welcome! If you'd like to contribute to this project, please fork the repository, create a new branch, and submit a pull request for review.
 
