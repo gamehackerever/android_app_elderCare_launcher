@@ -213,6 +213,12 @@ class MainActivity : AppCompatActivity(), OnInitListener {
             speakOut("Opening Chrome")
             openChrome()
         }
+
+        findViewById<CardView>(R.id.cardCalculator).setOnClickListener {
+            vibrate()
+            speakOut("Opening Calculator")
+            openCalculator()
+        }
     }
 
     private fun enableImmersiveMode() {
@@ -318,6 +324,39 @@ class MainActivity : AppCompatActivity(), OnInitListener {
             Toast.makeText(this, "Error toggling flashlight", Toast.LENGTH_SHORT).show()
         }
     }
+
+    private fun openCalculator() {
+        try {
+            // Implicit intent to open the default calculator
+            var intent = packageManager.getLaunchIntentForPackage("com.google.android.calculator")
+
+            // Check for Samsung Calculator
+            if (intent == null) {
+                intent = packageManager.getLaunchIntentForPackage("com.sec.android.app.popupcalculator")
+            }
+
+            // Check for Xiaomi Calculator
+            if (intent == null) {
+                intent = packageManager.getLaunchIntentForPackage("com.miui.calculator")
+            }
+
+            // If the intent is not null, it means we have the Calculator app installed
+            if (intent != null) {
+                startActivity(intent)
+            } else {
+                // If default calculator is not found, show a message or fallback to play store
+                // You can log an error message or do something else
+                val storeIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.android.calculator2"))
+                startActivity(storeIntent)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // Fallback: Open Play Store for calculator app if there was an issue
+            val storeIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.android.calculator2"))
+            startActivity(storeIntent)
+        }
+    }
+
 
     private fun openCalendar() {
         try {
