@@ -1,29 +1,24 @@
 package com.srinand.induction
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraManager
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.os.Handler
-import android.os.Looper
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.provider.MediaStore
+import android.provider.Settings
 import android.speech.tts.TextToSpeech
 import android.speech.tts.TextToSpeech.OnInitListener
 import android.telephony.gsm.SmsManager
 import android.util.Log
-import android.provider.MediaStore
-import android.provider.Settings
 import android.view.View
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -35,7 +30,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.material.button.MaterialButton
 import java.util.*
 
 class MainActivity : AppCompatActivity(), OnInitListener {
@@ -218,6 +212,14 @@ class MainActivity : AppCompatActivity(), OnInitListener {
             vibrate()
             speakOut("Opening Calculator")
             openCalculator()
+        }
+
+        findViewById<CardView>(R.id.cardSettings).setOnClickListener { v ->
+            // Intent to navigate to Settings screen
+            vibrate()
+            speakOut("Opening Settings")
+            val intent = Intent(Settings.ACTION_SETTINGS)  // This opens the general settings screen
+            startActivity(intent)
         }
     }
 
