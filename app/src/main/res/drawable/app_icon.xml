@@ -1,0 +1,33 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="100dp"
+    android:height="100dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+  <!-- Background Circle with a refined stroke -->
+  <path
+      android:fillColor="#FFFFFF"
+      android:strokeColor="#4285F4"
+      android:strokeWidth="3"
+      android:pathData="M50,5 A45,45 0 1,0 50,95 A45,45 0 1,0 50,5" />
+
+  <!-- Red Block (Top Left) -->
+  <path
+      android:fillColor="#EA4335"
+      android:pathData="M22,22 h24 v24 h-24 Z" />
+
+  <!-- Yellow Block (Top Right) -->
+  <path
+      android:fillColor="#FBBC05"
+      android:pathData="M54,22 h24 v24 h-24 Z" />
+
+  <!-- Green Block (Bottom Left) -->
+  <path
+      android:fillColor="#34A853"
+      android:pathData="M22,54 h24 v24 h-24 Z" />
+
+  <!-- Blue Block (Bottom Right) -->
+  <path
+      android:fillColor="#4285F4"
+      android:pathData="M54,54 h24 v24 h-24 Z" />
+</vector>
