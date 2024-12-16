@@ -1,6 +1,7 @@
 package com.srinand.induction
 
 import android.Manifest
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -493,8 +494,15 @@ class MainActivity : AppCompatActivity(), OnInitListener {
     }
 
     private fun openGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivity(intent)
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.type = "image/*" // Opens gallery apps that handle images
+        try {
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            // Handle the case where no gallery app is found
+            e.printStackTrace()
+            Toast.makeText(this, "No default gallery app found.", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun getLocationAndSendSOS() {
