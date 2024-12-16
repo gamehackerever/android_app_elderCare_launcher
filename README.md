@@ -31,16 +31,11 @@ Beyond the emergency tools, the launcher provides easy access to a selection of 
   - **Messages**: For sending and reading text messages.
   - **Calculator**: For quick calculations.
   - **Calendar**: For managing dates and scheduling events.
-  - **Settings**: To access device settings.
 
 ### 🔹 **Emergency Contact Management**
 - Manage emergency contacts directly in the app.
 - Contacts are saved for later use in sending **SMS messages** during emergencies.
-
-### 🔹 **Customizable Interface**
-- A **customizable** layout allowing users to select and rearrange available apps for easy access.
-- The design is specifically tailored to cater to the needs of elderly users, reducing complexity and unnecessary distractions.
-
+- 
 ---
 
 ## **Project Structure**
