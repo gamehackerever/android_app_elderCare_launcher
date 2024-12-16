@@ -30,7 +30,6 @@ Beyond the emergency tools, the launcher provides easy access to a selection of 
   - **Messages**: For sending and reading text messages.
   - **Calculator**: For quick calculations.
   - **Calendar**: For managing dates and scheduling events.
-  - **Settings**: To access device settings.
 
 ### 🔹 **Emergency Contact Management**
 - Manage emergency contacts directly in the app.
