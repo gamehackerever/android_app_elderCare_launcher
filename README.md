@@ -114,3 +114,16 @@ Contributions are welcome! If you'd like to contribute to this project, please f
 If you have any questions or suggestions, please feel free to contact the project maintainer:
 
 Email: srinandek@gmail.com
+
+---
+
+## **Credits**
+
+- **Icons**:
+  - [SVGRepo](https://www.svgrepo.com) for providing various icons.
+
+- **Development Tools**:
+  - [ChatGPT](https://chat.openai.com) for assistance in generating Kotlin code and providing guidance in app development.
+
+- **Other Resources**:
+  - Various online resources for Android development, including Stack Overflow, official Android Documentation, and other coding tutorials.
