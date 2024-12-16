@@ -17,6 +17,7 @@ import android.provider.Settings
 import android.speech.tts.TextToSpeech
 import android.speech.tts.TextToSpeech.OnInitListener
 import android.telephony.gsm.SmsManager
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -50,6 +51,12 @@ class MainActivity : AppCompatActivity(), OnInitListener {
         setContentView(R.layout.home_page)
 
         enableImmersiveMode()
+
+        if (!isDefaultHomeApp()) {
+            // If not, open the Home Settings to allow the user to select your app
+            Toast.makeText(this, "Make ElderCare Launcher as Default Home App", Toast.LENGTH_LONG).show()
+            openHomeSettings()
+        }
 
         // Get the layout inflater
         val inflater = layoutInflater
@@ -252,6 +259,23 @@ class MainActivity : AppCompatActivity(), OnInitListener {
         if (permissionsToRequest.isNotEmpty()) {
             ActivityCompat.requestPermissions(this, permissionsToRequest.toTypedArray(), REQUEST_CODE_PERMISSION)
         }
+    }
+
+    // Method to check if your app is the default home app
+    private fun isDefaultHomeApp(): Boolean {
+        val intent = Intent(Intent.ACTION_MAIN)
+        intent.addCategory(Intent.CATEGORY_HOME)
+
+        // Resolve the activity and check if it's your app
+        val currentHomePackage = intent.resolveActivity(packageManager)?.packageName
+
+        return TextUtils.equals(currentHomePackage, packageName)
+    }
+
+    // Open the Home Settings screen for selecting the default home app
+    private fun openHomeSettings() {
+        val intent = Intent(Settings.ACTION_HOME_SETTINGS)
+        startActivity(intent)
     }
 
     private fun showFirstLaunchHint() {
