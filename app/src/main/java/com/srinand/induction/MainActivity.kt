@@ -21,6 +21,7 @@ import android.telephony.gsm.SmsManager
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -284,15 +285,26 @@ class MainActivity : AppCompatActivity(), OnInitListener {
     }
 
     private fun showFirstLaunchHint() {
-        AlertDialog.Builder(this)
-            .setTitle("Welcome!")
-            .setMessage("Long press the SOS button to edit emergency contacts.")
-            .setPositiveButton("Got it") { dialog, _ ->
-                dialog.dismiss()
-            }
+        // Inflate the custom layout
+        val dialogView = layoutInflater.inflate(R.layout.dialog_first_launch, null)
+
+        // Create the dialog and apply consistent style
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
             .create()
-            .show()
+
+        // Handle button click
+        val gotItButton: Button = dialogView.findViewById(R.id.gotItButton)
+        gotItButton.setOnClickListener {
+            dialog.dismiss() // Dismiss the dialog
+        }
+
+        // Show the dialog
+        dialog.show()
     }
+
+
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun activateSOS() {
