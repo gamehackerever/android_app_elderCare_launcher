@@ -35,9 +35,13 @@ class LocationPickerActivity : AppCompatActivity() {
     private var selectedLocation: GeoPoint? = null
     private lateinit var parentScrollView: ScrollView
 
+    // Zoom level threshold below which we will apply a specific zoom (e.g., level 10)
+    private val zoomThreshold = 10.0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.content_pick_location)
+
 
         // Initialize views
         mapView = findViewById(R.id.osmMapView)
@@ -73,6 +77,7 @@ class LocationPickerActivity : AppCompatActivity() {
         // Button to set marker at current location
         setMarkerAtCurrentLocationButton.setOnClickListener {
             fetchLocation()
+            Toast.makeText(this, "Current Location Set!", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -106,16 +111,27 @@ class LocationPickerActivity : AppCompatActivity() {
             marker.position = geoPoint
         }
 
-        selectedLocation = geoPoint
+        // Get the current zoom level of the map
+        val zoomLevel = mapView.zoomLevelDouble
 
-        mapView.controller.setCenter(geoPoint)
-        mapView.controller.setZoom(15.0)
+        // If zoom level is lower than threshold, zoom in and center
+        if (zoomLevel > zoomThreshold) {
+            mapView.controller.setZoom(18.0)  // Zoom in to a comfortable level
+            mapView.controller.setCenter(geoPoint)  // Recenter map on the marker
+        } else {
+            mapView.controller.setCenter(geoPoint)  // Just recenter the map if zoomed in enough
+        }
+
+        selectedLocation = geoPoint
     }
 
+
     private fun setupMap() {
-        mapView.setTileSource(TileSourceFactory.MAPNIK)
-        mapView.setBuiltInZoomControls(true)
+        Configuration.getInstance().load(applicationContext, getSharedPreferences("osmdroid", MODE_PRIVATE))
         mapView.setMultiTouchControls(true)
+        mapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
+        mapView.setBuiltInZoomControls(true)
+        mapView.controller.setZoom(18.0)
 
         // Handle map touch events to disable scroll
         mapView.setOnTouchListener { _, event ->
@@ -137,7 +153,12 @@ class LocationPickerActivity : AppCompatActivity() {
         val mapEventsReceiver = object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
                 placeMarkerAtLocation(p.latitude, p.longitude)
-                locationTextView.text = "Selected Location:\n Lat: ${String.format("%.7f", p.latitude)}, Lon: ${String.format("%.7f", p.longitude)}"
+                locationTextView.text = "Selected Location:\n Lat: ${
+                    String.format(
+                        "%.7f",
+                        p.latitude
+                    )
+                }, Lon: ${String.format("%.7f", p.longitude)}"
                 return true
             }
 
