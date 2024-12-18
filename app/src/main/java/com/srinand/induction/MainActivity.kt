@@ -32,6 +32,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken
+import com.google.gson.Gson
 import java.util.*
 
 class MainActivity : AppCompatActivity(), OnInitListener {
@@ -74,11 +76,13 @@ class MainActivity : AppCompatActivity(), OnInitListener {
         }
 
         vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
-        sharedPreferences = getSharedPreferences("emergency_contacts", MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences("emergency_contacts_map", MODE_PRIVATE)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         tts = TextToSpeech(this, this)
+
+        migrateLegacyContacts()
 
         // Check first launch
         val isFirstLaunch = sharedPreferences.getBoolean("isFirstLaunch", true)
@@ -521,11 +525,9 @@ class MainActivity : AppCompatActivity(), OnInitListener {
     }
 
     private fun sendSMS(locationDetails: String) {
-        // Retrieve the emergency contacts from SharedPreferences
-        val emergencyContacts = sharedPreferences.getStringSet("emergency_contacts", setOf())
-        if (emergencyContacts.isNullOrEmpty()) {
-            // Handle empty or null emergency contacts (inform the user)
-            Log.e("MainActivity", "Emergency contact not found.")
+        val contactsMap = loadContactsFromPreferences()
+
+        if (contactsMap.isEmpty()) {
             Toast.makeText(this, "Please set an emergency contact first.", Toast.LENGTH_SHORT).show()
             return
         }
@@ -533,36 +535,74 @@ class MainActivity : AppCompatActivity(), OnInitListener {
         val message = "SOS Alert: Emergency! Location: $locationDetails"
         val smsManager = SmsManager.getDefault()
 
-        // Loop through each emergency contact and send SMS
-        for (phoneNumber in emergencyContacts) {
-            Log.d("MainActivity", "Sending SMS to: $phoneNumber")
+        for ((name, phoneNumber) in contactsMap) {
+            if (phoneNumber.isBlank()) continue
             smsManager.sendTextMessage(phoneNumber, null, message, null, null)
-            Toast.makeText(this, "SMS sent to $phoneNumber", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "SMS sent to $name ($phoneNumber)", Toast.LENGTH_SHORT).show()
         }
     }
 
-
     private fun sendSMS(latitude: Double, longitude: Double) {
-        // Retrieve the emergency contacts from SharedPreferences
-        val emergencyContacts = sharedPreferences.getStringSet("emergency_contacts", setOf())
-        if (emergencyContacts.isNullOrEmpty()) {
-            // Handle empty or null phone number (inform the user)
-            Log.e("MainActivity", "Emergency contact not found.")
+        val contactsMap = loadContactsFromPreferences()
+
+        if (contactsMap.isEmpty()) {
             Toast.makeText(this, "Please set an emergency contact first.", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val smsManager: SmsManager = SmsManager.getDefault()
         val message = "SOS Alert. My Location: Latitude: $latitude, Longitude: $longitude."
+        val smsManager = SmsManager.getDefault()
 
-        // Send the SMS to each contact in the set
-        for (contact in emergencyContacts) {
-            smsManager.sendTextMessage(contact, null, message, null, null)
-            Toast.makeText(this, "SMS sent to $contact", Toast.LENGTH_SHORT).show()
-            Log.d("MainActivity", "Emergency SMS sent to $contact.")
+        for ((name, phoneNumber) in contactsMap) {
+            if (phoneNumber.isBlank()) continue
+            smsManager.sendTextMessage(phoneNumber, null, message, null, null)
+            Toast.makeText(this, "SMS sent to $name ($phoneNumber)", Toast.LENGTH_SHORT).show()
         }
     }
 
+    private fun saveContactsToPreferences(contactsMap: Map<String, String>) {
+        val gson = Gson()
+        val jsonContacts = gson.toJson(contactsMap)
+        sharedPreferences.edit().putString("emergency_contacts_map", jsonContacts).apply()
+        Log.d("MainActivity", "Saved contacts as JSON: $jsonContacts")
+    }
+
+    private fun loadContactsFromPreferences(): Map<String, String> {
+        val jsonContacts = sharedPreferences.getString("emergency_contacts_map", "{}") ?: "{}"
+        Log.d("MainActivity", "Loaded contacts JSON: $jsonContacts")
+        return Gson().fromJson(jsonContacts, object : TypeToken<Map<String, String>>() {}.type)
+    }
+
+    private fun migrateLegacyContacts() {
+        // Check if the "emergency_contacts_map" contains old data
+        if (sharedPreferences.contains("emergency_contacts_map")) {
+            try {
+                // Attempt to retrieve as a string (modern format)
+                val jsonContacts = sharedPreferences.getString("emergency_contacts_map", null)
+                if (jsonContacts != null) {
+                    Log.d("MainActivity", "Contacts are already in JSON format: $jsonContacts")
+                    return
+                }
+            } catch (e: ClassCastException) {
+                Log.w("MainActivity", "Legacy data detected. Migrating...")
+            }
+
+            // Retrieve legacy `Set<String>` format if present
+            val legacySet = sharedPreferences.getStringSet("emergency_contacts_map", null)
+            if (legacySet != null) {
+                Log.d("MainActivity", "Legacy contact set: $legacySet")
+
+                // Convert `Set<String>` to a `Map<String, String>`
+                val contactsMap = legacySet.associateWith { "Unknown Name" }
+
+                // Save the new JSON structure
+                saveContactsToPreferences(contactsMap)
+
+                // Remove the old format from SharedPreferences
+                sharedPreferences.edit().remove("emergency_contacts_map").apply()
+            }
+        }
+    }
 
 
 

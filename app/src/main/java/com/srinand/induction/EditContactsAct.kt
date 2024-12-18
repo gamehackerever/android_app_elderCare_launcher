@@ -15,6 +15,8 @@ import android.content.SharedPreferences
 import android.util.Log
 import android.view.View
 import androidx.cardview.widget.CardView
+import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken
+import com.google.gson.Gson
 
 class EditContactsAct : AppCompatActivity() {
 
@@ -105,7 +107,7 @@ class EditContactsAct : AppCompatActivity() {
 
 
         // Initialize SharedPreferences for contacts
-        sharedPreferences = getSharedPreferences("emergency_contacts", MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences("emergency_contacts_map", MODE_PRIVATE)
 
         // Set up RecyclerView
         contactsRecyclerView = findViewById(R.id.contactsRecyclerView)
@@ -132,35 +134,50 @@ class EditContactsAct : AppCompatActivity() {
     }
 
     private fun addContactToEmergencyList(contactName: String, phoneNumber: String) {
-        updateUI()  // Update UI state
-        val contacts = sharedPreferences.getStringSet("emergency_contacts", mutableSetOf())?.toMutableSet() ?: mutableSetOf()
+        val contactsMap = loadContactsFromPreferences().toMutableMap()
 
-        val contactEntry = "$contactName: $phoneNumber"
-        if (contacts.add(contactEntry)) {
-            sharedPreferences.edit().putStringSet("emergency_contacts", contacts).apply()
-            contactsList.add(contactEntry)  // Adding to the in-memory list
-            contactsAdapter.notifyItemInserted(contactsList.size - 1)
-
-            Toast.makeText(this, "Contact added: $contactEntry", Toast.LENGTH_SHORT).show()
+        // Check if the contact already exists
+        if (contactsMap.containsKey(contactName)) {
+            Toast.makeText(this, "Contact already exists: $contactName", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(this, "Contact already exists", Toast.LENGTH_SHORT).show()
+            // Add new contact
+            contactsMap[contactName] = phoneNumber
+            saveContactsToPreferences(contactsMap)
+            contactsList.add("$contactName: $phoneNumber")
+            contactsAdapter.notifyItemInserted(contactsList.size - 1)
+            Toast.makeText(this, "Contact added: $contactName", Toast.LENGTH_SHORT).show()
         }
         updateUI()
     }
 
 
     private fun deleteContact(contact: String) {
-        updateUI()
-        if (contactsList.remove(contact)) {
-            contactsAdapter.notifyDataSetChanged()
+        val contactsMap = loadContactsFromPreferences().toMutableMap()
 
-            sharedPreferences.edit().putStringSet("emergency_contacts", contactsList.toSet()).apply()
-            Toast.makeText(this, "$contact deleted", Toast.LENGTH_SHORT).show()
+        // Extract name from "name: phone"
+        val contactName = contact.substringBefore(":").trim()
+
+        if (contactsMap.remove(contactName) != null) {
+            saveContactsToPreferences(contactsMap)
+            contactsList.remove(contact)
+            contactsAdapter.notifyDataSetChanged()
+            Toast.makeText(this, "Contact deleted: $contactName", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(this, "Failed to delete contact", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Failed to delete contact: $contactName", Toast.LENGTH_SHORT).show()
         }
         updateUI()
     }
+
+    private fun loadContacts() {
+        val contactsMap = loadContactsFromPreferences()
+        contactsList.clear()
+        contactsMap.forEach { (name, phone) ->
+            contactsList.add("$name: $phone")
+        }
+        contactsAdapter.notifyDataSetChanged()
+        updateUI()
+    }
+
 
     private fun updateUI() {
         if (contactsList.isEmpty()) {
@@ -172,12 +189,16 @@ class EditContactsAct : AppCompatActivity() {
         }
     }
 
-    private fun loadContacts() {
-        val savedContacts = sharedPreferences.getStringSet("emergency_contacts", mutableSetOf()) ?: mutableSetOf()
-        contactsList.clear()
-        contactsList.addAll(savedContacts)
-        contactsAdapter.notifyDataSetChanged()
-        updateUI()  // Update UI after the contacts are loaded
+    private fun loadContactsFromPreferences(): Map<String, String> {
+        val jsonContacts = sharedPreferences.getString("emergency_contacts_map", "{}") ?: "{}"
+        return Gson().fromJson(jsonContacts, object : TypeToken<Map<String, String>>() {}.type)
+    }
+
+    private fun saveContactsToPreferences(contactsMap: Map<String, String>) {
+        val gson = Gson()
+        val jsonContacts = gson.toJson(contactsMap)
+        sharedPreferences.edit().putString("emergency_contacts_map", jsonContacts).apply()
+        Log.d("EditContactsAct", "Contacts saved: $jsonContacts")
     }
 
     override fun onBackPressed() {

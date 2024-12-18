@@ -63,6 +63,9 @@ dependencies {
     implementation("org.osmdroid:osmdroid-android:6.1.20")
 
     implementation(libs.flexbox)
+    implementation(libs.firebase.crashlytics.buildtools)
+    implementation(libs.gson)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
