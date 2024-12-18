@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:paddingTop="16dp">
+
+        <!-- Card Container for Message -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:gravity="center_horizontal">
+
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/app_icon"
+                    android:contentDescription="ElderCare Icon"
+                    android:layout_marginBottom="8dp"
+                    android:adjustViewBounds="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Set ElderCare as Default Launcher"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:textColor="#333333"
+                    android:layout_marginBottom="8dp"
+                    android:maxWidth="300dp"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="To make your experience easier, set ElderCare as your default home app."
+                    android:textSize="18sp"
+                    android:gravity="center"
+                    android:textColor="#555555"
+                    android:maxWidth="300dp"
+                    android:ellipsize="end" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Action Button Container 1-->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/btnSetDefault"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Set Default"
+                    android:textSize="18sp"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginBottom="8dp"
+                    android:paddingVertical="12dp"
+                    android:minHeight="60dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/rounded_button_red" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Action Button Container 2 -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/btnNotNow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Not Now"
+                    android:textSize="18sp"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginBottom="8dp"
+                    android:paddingVertical="12dp"
+                    android:minHeight="60dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/rounded_button_grey" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Action Button Container 3 -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/btnDoNotAskAgain"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Don't Ask Again"
+                    android:textSize="18sp"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginBottom="8dp"
+                    android:paddingVertical="12dp"
+                    android:minHeight="60dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/rounded_button_orange" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+</ScrollView>

@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity(), OnInitListener {
     private lateinit var tts: TextToSpeech
     private lateinit var vibrator: Vibrator
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var sharedPreferencesHome: SharedPreferences
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private val REQUEST_CODE_PERMISSION = 1001
@@ -56,14 +57,32 @@ class MainActivity : AppCompatActivity(), OnInitListener {
 
         enableImmersiveMode()
 
-        if (!isDefaultHomeApp()) {
-            // If not, open the Home Settings to allow the user to select your app
-            Toast.makeText(this, "Make ElderCare Launcher as Default Home App", Toast.LENGTH_LONG).show()
-            openHomeSettings()
-        }
+        sharedPreferencesHome = getSharedPreferences("app_preferences", MODE_PRIVATE)
+        if (!sharedPreferencesHome.getBoolean("isDontAskAgain", false) || isDefaultHomeApp()) {
+            val builder = AlertDialog.Builder(this)
+                .setView(R.layout.dialog_set_launcher)
+                .setCancelable(false)
 
-        // Get the layout inflater
-        val inflater = layoutInflater
+            val dialog = builder.create()
+            dialog.show()
+
+            dialog.findViewById<TextView>(R.id.btnSetDefault)?.setOnClickListener {
+                vibrate()
+                openHomeSettings()
+                dialog.dismiss()
+            }
+
+            dialog.findViewById<TextView>(R.id.btnNotNow)?.setOnClickListener {
+                vibrate()
+                dialog.dismiss()
+            }
+
+            dialog.findViewById<TextView>(R.id.btnDoNotAskAgain)?.setOnClickListener {
+                vibrate()
+                sharedPreferencesHome.edit().putBoolean("isDontAskAgain", true).apply()
+                dialog.dismiss()
+            }
+        }
 
         val btnHotstar = findViewById<CardView>(R.id.btnHotstar)
 
@@ -78,6 +97,7 @@ class MainActivity : AppCompatActivity(), OnInitListener {
 
         vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
         sharedPreferences = getSharedPreferences("emergency_contacts_map", MODE_PRIVATE)
+
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -283,6 +303,44 @@ class MainActivity : AppCompatActivity(), OnInitListener {
         val intent = Intent(Settings.ACTION_HOME_SETTINGS)
         startActivity(intent)
     }
+    private fun showDefaultHomeDialog() {
+        // Inflate the custom dialog layout
+        val dialogView = layoutInflater.inflate(R.layout.dialog_set_launcher, null)
+
+        // Create and configure dialog
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false) // Prevent accidental dismissal
+            .create()
+
+        // Access the dialog elements (change to TextViews for styled buttons)
+        val btnSetDefault: TextView = dialogView.findViewById(R.id.btnSetDefault)
+        val btnNotNow: TextView = dialogView.findViewById(R.id.btnNotNow)
+        val btnDoNotAskAgain: TextView = dialogView.findViewById(R.id.btnDoNotAskAgain)
+
+        // Set up "Set Default" action
+        btnSetDefault.setOnClickListener {
+            openHomeSettings() // Open default launcher settings
+            dialog.dismiss()
+        }
+
+        // Set up "Not Now" action
+        btnNotNow.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        // Set up "Do Not Ask Again" action
+        btnDoNotAskAgain.setOnClickListener {
+            // Save preference to SharedPreferences
+            sharedPreferences.edit().putBoolean("isDontAskAgain", true).apply()
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+
+
 
     private fun showFirstLaunchHint() {
         // Inflate the custom layout
