@@ -90,12 +90,19 @@ class EditContactsAct : AppCompatActivity() {
         val longitude = sharedPreferencesLocation.getFloat("longitude", 0.0f).toDouble()
 
         if (latitude != 0.0 && longitude != 0.0) {
-            // If valid location data is available, display it
-            locationText.text = "Default Location:\nLat=$latitude, Lon=$longitude"
+            locationText.text = """
+        Fallback Location for SOS Messages:
+        Lat=$latitude, Lon=$longitude
+        (Used when current location is unavailable or GPS is off)
+    """.trimIndent()
         } else {
-            locationText.text = "No valid location data found"
-            Toast.makeText(this, "No location data available", Toast.LENGTH_SHORT).show()
+            locationText.text = """
+        No Fallback Location Set:
+        SOS messages may lack location info if GPS is off
+    """.trimIndent()
+            Toast.makeText(this, "No fallback location available. Please set a default location.", Toast.LENGTH_SHORT).show()
         }
+
 
         // Initialize SharedPreferences for contacts
         sharedPreferences = getSharedPreferences("emergency_contacts", MODE_PRIVATE)
