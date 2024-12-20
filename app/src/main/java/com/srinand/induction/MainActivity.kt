@@ -31,11 +31,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken
 import com.google.gson.Gson
-import java.util.*
+import java.util.Locale
 
 class MainActivity : AppCompatActivity(), OnInitListener {
     private var isFlashlightOn = false
@@ -83,6 +85,53 @@ class MainActivity : AppCompatActivity(), OnInitListener {
                 dialog.dismiss()
             }
         }
+
+
+        val paymentApps = mutableListOf<PaymentApp>()
+
+        if (isAppInstalled("com.google.android.apps.nbu.paisa.user")) {
+            paymentApps.add(
+                PaymentApp("Google Pay", R.drawable.google_pay_primary_logo_logo_svgrepo_com)
+            )
+        }
+
+        if (isAppInstalled("net.one97.paytm")) {
+            paymentApps.add(
+                PaymentApp("Paytm", R.drawable.paytm_svgrepo_com)
+            )
+        }
+
+        if (isAppInstalled("com.phonepe.app")) {
+            paymentApps.add(
+                PaymentApp("PhonePe", R.drawable.phonepe)
+            )
+        }
+
+        val adapter = PaymentAdapter(paymentApps, object : PaymentAdapter.OnPaymentClickListener {
+            override fun onPaymentClick(paymentApp: PaymentApp) {
+                when (paymentApp.name) {
+                    "Google Pay" -> {
+                        // Open Google Pay payment flow
+                        openPaymentApp("com.google.android.apps.nbu.paisa.user")
+                        Toast.makeText(this@MainActivity, "Google Pay selected", Toast.LENGTH_SHORT).show()
+                    }
+                    "PhonePe" -> {
+                        // Open PhonePe payment flow
+                        openPaymentApp("com.phonepe.app")
+                        Toast.makeText(this@MainActivity, "PhonePe selected", Toast.LENGTH_SHORT).show()
+                    }
+                    "Paytm" -> {
+                        // Open PayPal payment flow
+                        openPaymentApp("net.one97.paytm")
+                        Toast.makeText(this@MainActivity, "Paytm selected", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        })
+
+        val recyclerView = findViewById<RecyclerView>(R.id.rvPaymentOptions)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
 
         val btnHotstar = findViewById<CardView>(R.id.btnHotstar)
 
@@ -240,6 +289,7 @@ class MainActivity : AppCompatActivity(), OnInitListener {
             speakOut("Opening Chrome")
             openChrome()
         }
+
 
         findViewById<CardView>(R.id.cardCalculator).setOnClickListener {
             vibrate()
@@ -458,6 +508,16 @@ class MainActivity : AppCompatActivity(), OnInitListener {
         }
     }
 
+    private fun openPaymentApp(packageName: String) {
+        // Implicit intent to open GPay
+        val intent = packageManager.getLaunchIntentForPackage(packageName)
+
+        if (intent != null) {
+            startActivity(intent)
+        } else {
+            Toast.makeText(this, "No Payment app installed!", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     private fun openCalendar() {
         try {

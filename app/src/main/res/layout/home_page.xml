@@ -47,6 +47,24 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cardPaymentOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="6dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:backgroundTint="#F9F9F9">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPaymentOptions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </androidx.cardview.widget.CardView>
+
+
+        <androidx.cardview.widget.CardView
             android:id="@+id/cardCalls"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -78,6 +96,7 @@
                     android:textColor="#000000" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+
 
         <androidx.cardview.widget.CardView
             android:id="@+id/flashlight"

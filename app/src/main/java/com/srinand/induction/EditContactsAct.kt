@@ -1,20 +1,19 @@
 package com.srinand.induction
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
-import android.provider.ContactsContract
 import android.os.Bundle
-import android.widget.Button
+import android.provider.ContactsContract
+import android.util.Log
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import android.content.SharedPreferences
-import android.util.Log
-import android.view.View
-import androidx.cardview.widget.CardView
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 
